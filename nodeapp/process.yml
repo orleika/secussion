@@ -1,0 +1,6 @@
+apps:
+  - script: 'app.js'
+    name: 'secussion'
+    exec_node: 'cluster'
+    instance: 4
+  - script: 'worker.js'

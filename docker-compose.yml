@@ -1,0 +1,24 @@
+version: '3.5'
+services:
+  nginx:
+    image: orleika/nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - $PWD/nginx/sites-enabled:/etc/nginx/sites-enabled:ro
+      - $PWD/nginx/conf.d:/etc/nginx/conf.d:ro
+      - $PWD/www:/usr/share/nginx/html
+      - /etc/letsencrypt:/etc/cert:ro
+      - $PWD/nginx/logs:/var/log/nginx
+    links:
+      - 'nodeapp'
+  nodeapp:
+    image: keymetrics/pm2:latest-alpine
+    ports:
+      - '3000:3000'
+    volumes:
+      - $PWD/nodeapp:/root
+    working_dir: /root
+    command: ['pm2-runtime', 'process.yml']
