@@ -8,10 +8,21 @@ const app = express()
 const server = http.createServer(app)
 const wss = new WebSocket.Server({ server })
 
-const INIT_MESSAGES = `Secussionへようこそ。\n
-ここではセキュリティに関する質問にお答えしたり，疑問に思っているテーマに関して情報を収集し意見を提示します。\n
-興味のあるテーマに関して書き込んでください。\n
-Secussionと議論を深めましょう。`
+const INIT_MESSAGE = `Secussionへようこそ。
+まず、セキュリティに関してあなたが興味を持っているテーマを教えてください。`
+
+const THEME_MESSAGE1 = `提示されたテーマに関して次のような意見があります。`
+const THEME_MESSAGE2 = `これらについてあなたの考えを聞かせてください。`
+
+const OPINION_MESSAGE1 = `あなたの考えに賛成する次の意見があります。`
+const OPINION_MESSAGE2 = `また、あなたの考えに反対する次の意見もあります。`
+
+const NEXT_MESSAGE = `続けて、あなたに別の考えがある場合は聞かせてください。
+もし、新しいテーマについて議論するならば\\newと入力してください。`
+
+const RENEW_MESSAGE = `では、セキュリティに関してあなたが興味を持っているテーマを教えてください。`
+
+const ERROR_MESSAGE = `不正な入力がされました。もう一度試してください。`
 
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
 
@@ -20,10 +31,33 @@ wss.on('connection', (ws) => {
     (async (order) => {
       console.log(order)
       await sleep(1000)
-      if (order === '/init') {
-        ws.send(INIT_MESSAGES)
-      } else {
-        ws.send('Hello')
+      const command = order.split(' ')[0]
+      const message = order.slice(command.length + 1)
+      switch (command) {
+        case '/init':
+          ws.send(`/theme ${INIT_MESSAGE}`)
+          break
+        case '/theme':
+          // exec
+          keywords = ''
+          op = ''
+          ws.send(`/keywords ${keywords}`)
+          ws.send(`/opinion ${THEME_MESSAGE1}\n${op}\n${THEME_MESSAGE2}`)
+          break
+        case '/opinion':
+          keywords = message.split(':')[0]
+          opinion = message.slice(keywords.length + 1)
+          // exec
+          posOp = ''
+          negOp = ''
+          ws.send(`/new ${OPINION_MESSAGE1}\n${posOp}\n${OPINION_MESSAGE2}\n${negOp}\n${NEXT_MESSAGE}`)
+          break
+        case '/new':
+          ws.send(`/theme ${RENEW_MESSAGE}`)
+          break
+        default:
+          ws.send(`/error ${ERROR_MESSAGE}`)
+          break
       }
     })(order)
   }).on('close', () => {
@@ -40,20 +74,20 @@ process.on('SIGINT', () => {
 })
 
 function noop() {}
- 
+
 function heartbeat() {
   this.isAlive = true
 }
- 
+
 wss.on('connection', function connection(ws) {
   ws.isAlive = true
   ws.on('pong', heartbeat)
 });
- 
+
 const interval = setInterval(function ping() {
   wss.clients.forEach(function each(ws) {
     if (ws.isAlive === false) return ws.terminate()
- 
+
     ws.isAlive = false
     ws.ping(noop)
   })

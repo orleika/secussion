@@ -4,18 +4,47 @@
   const orderForm = document.getElementById('order')
 
   orderForm.value = ''
+  orderForm.placeholder = '興味を持っているテーマを書き込む'
 
   ws.addEventListener('open', () => {
     loading(true)
     send('/init')
   })
 
+  let state = ''
+  let keywords = ''
   ws.addEventListener('message', event => {
     loading(false)
-    const reply = event.data
-    appendLogs(reply)
-    logsForm.scrollTop = logsForm.scrollHeight
+    const command = event.data.split(' ')[0]
+    const reply = event.data.slice(command.length + 1)
+    if (command === '/keywords') {
+      keywords = reply
+    } else if (command === '/error') {
+      appendLogs(reply)
+    } else {
+      appendLogs(reply)
+      setPlaceholder(command)
+      state = command
+      logsForm.scrollTop = logsForm.scrollHeight
+    }
   })
+
+  function setPlaceholder(command) {
+    switch(state) {
+      case '/theme':
+        orderForm.placeholder = '興味を持っているテーマを書き込む'
+        break
+      case '/opinion':
+        orderForm.placeholder = 'あなたの考えを書き込む'
+        break
+      case '/new':
+        orderForm.placeholder = '新たなテーマについて入力する場合は\\newと入力'
+        break
+      default:
+        orderForm.placeholder = ''
+        break
+    }
+  }
 
   document.addEventListener('keypress', event => {
     const order = orderForm.value
@@ -28,7 +57,14 @@
   });
 
   function send(order) {
-    ws.send(order)
+    if (state === '/new' && order === '/new') {
+      ws.send(order)
+    } else {
+      if (state === '/new') {
+        state = '/opinion'
+      }
+      ws.send(state + ' ' + order)
+    }
     loading(true)
   }
 
