@@ -8,7 +8,7 @@
 
   ws.addEventListener('open', () => {
     loading(true)
-    send('/init')
+    ws.send('/init')
   })
 
   let state = ''
@@ -29,7 +29,7 @@
     }
   })
 
-  function setPlaceholder(command) {
+  function setPlaceholder(state) {
     switch(state) {
       case '/theme':
         orderForm.placeholder = '興味を持っているテーマを書き込む'
@@ -38,7 +38,7 @@
         orderForm.placeholder = 'あなたの考えを書き込む'
         break
       case '/new':
-        orderForm.placeholder = '新たなテーマについて入力する場合は\\newと入力'
+        orderForm.placeholder = '新たなテーマについて入力する場合は/newと入力'
         break
       default:
         orderForm.placeholder = ''
@@ -57,7 +57,7 @@
   });
 
   function send(order) {
-    if (state === '/new' && order === '/new') {
+    if (order === '/new') {
       ws.send(order)
     } else {
       if (state === '/new') {

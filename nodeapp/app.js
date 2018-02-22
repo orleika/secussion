@@ -18,7 +18,7 @@ const OPINION_MESSAGE1 = `あなたの考えに賛成する次の意見があり
 const OPINION_MESSAGE2 = `また、あなたの考えに反対する次の意見もあります。`
 
 const NEXT_MESSAGE = `続けて、あなたに別の考えがある場合は聞かせてください。
-もし、新しいテーマについて議論するならば\\newと入力してください。`
+もし、新しいテーマについて議論するならば/newと入力してください。`
 
 const RENEW_MESSAGE = `では、セキュリティに関してあなたが興味を持っているテーマを教えてください。`
 
@@ -32,6 +32,7 @@ wss.on('connection', (ws) => {
       console.log(order)
       await sleep(1000)
       const command = order.split(' ')[0]
+      console.log(order.split(' '))
       const message = order.slice(command.length + 1)
       switch (command) {
         case '/init':
