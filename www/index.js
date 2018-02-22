@@ -63,6 +63,9 @@
       if (state === '/new') {
         state = '/opinion'
       }
+      if (state === '/opinion') {
+        order = `${keywords}:${order}`
+      }
       ws.send(state + ' ' + order)
     }
     loading(true)
