@@ -6,7 +6,6 @@ services:
       - '80:80'
       - '443:443'
     volumes:
-      - /etc/localtime:/etc/localtime:ro
       - $PWD/nginx/sites-enabled:/etc/nginx/sites-enabled:ro
       - $PWD/nginx/conf.d:/etc/nginx/conf.d:ro
       - $PWD/www:/usr/share/nginx/html
@@ -16,8 +15,8 @@ services:
       - 'nodeapp'
   nodeapp:
     image: keymetrics/pm2:latest-alpine
-    networks:
-      - dmaki_link
+    ports:
+      - '3000:3000'
     volumes:
       - $PWD/nodeapp:/root
     working_dir: /root
@@ -28,10 +27,10 @@ services:
       context: ./api
       cache_from:
         - python:3
+    ports:
+      - '5000:5000'
     volumes:
       - $PWD/api:/work
-    networks:
-      - dmaki_link
     command:
       - /bin/bash
     stdin_open: true
@@ -46,10 +45,5 @@ services:
       - db-storage:/var/lib/mysql
     ports:
       - '3306:3306'
-    networks:
-      - dmaki_link
 volumes:
   db-storage:
-networks:
-  dmaki_link:
-    external: true
