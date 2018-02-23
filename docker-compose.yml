@@ -17,6 +17,8 @@ services:
     image: keymetrics/pm2:latest-alpine
     ports:
       - '3000:3000'
+    links:
+      - 'api'
     volumes:
       - $PWD/nodeapp:/root
     working_dir: /root
