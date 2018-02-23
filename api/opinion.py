@@ -9,6 +9,7 @@ import numpy
 import re
 from itertools import chain
 from pprint import pprint
+from collections import namedtuple
 
 class Opinion:
 
