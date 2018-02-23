@@ -16,8 +16,8 @@ services:
       - 'nodeapp'
   nodeapp:
     image: keymetrics/pm2:latest-alpine
-    links:
-      - 'api'
+    networks:
+      - dmaki_link
     volumes:
       - $PWD/nodeapp:/root
     working_dir: /root
