@@ -2,3 +2,7 @@ node_modules/
 .ash_history
 .pm2/
 .config/
+*.log
+.env
+__pycache__/
+vendor/
