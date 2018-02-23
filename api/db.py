@@ -80,6 +80,48 @@ class DB:
         self.conn.commit()
         cursor.close()
 
+    def get_pns(self):
+        cursor = self.conn.cursor()
+        sql = ("SELECT * FROM pns")
+        cursor.execute(sql)
+        pn = namedtuple('Pn', 'surface, reading, pos, score')
+        results = []
+        for row in cursor:
+            results.append(pn(row[1], row[2], row[3], row[4]))
+        cursor.close()
+        return results
+
+    def get_pn(self, surface = '', reading = '', pos = ''):
+        cursor = self.conn.cursor()
+        sql = ("SELECT * FROM pns WHERE surface = %(surface)s and reading = %(reading)s and pos = %(pos)s")
+        data = {
+            surface: surface,
+            reading: reading,
+            pos: pos
+        }
+        cursor.execute(sql, data)
+        pn = namedtuple('Pn', 'surface, reading, pos, score')
+        results = []
+        for row in cursor:
+            results.append(pn(row[1], row[2], row[3], row[4]))
+        cursor.close()
+        return results
+
+    def save_pn(self, surface = '', reading = '', pos = '', score = 0.0):
+        cursor = self.conn.cursor()
+        sql = ("INSERT INTO pns "
+                      "(surface, reading, pos, score) "
+                      "VALUES (%(surface)s, %(reading)s, %(pos)s, %(score)s)")
+        data = {
+            'surface': surface,
+            'reading': reading,
+            'pos': pos,
+            'score': score
+        }
+        cursor.execute(sql, data)
+        self.conn.commit()
+        cursor.close()
+
     def all(self):
         cursor = self.conn.cursor()
         sql = ("SELECT * FROM wnet "

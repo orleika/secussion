@@ -64,6 +64,19 @@ class Opinion:
         else:
             return True
 
+    @staticmethod
+    def senti(sentence):
+        db = DB(host = 'mysql')
+        score = 0.0
+        tokens = Theme.tokenize(sentence, pos='default')
+        for token in tokens:
+            pn = db.get_pn(token.surface, token.reading, token.pos)
+            if len(pn) == 0:
+                continue
+            else:
+                score += pn[0].score
+        return score / len(tokens)
+
     def get(self):
         # standardize
         keywords = self.trimmed_stopwords(self.tokenize(self.theme, pos='noun_verbs'))
@@ -85,15 +98,24 @@ class Opinion:
         # vectorize
         vector = TfIdf.vector(sentence_tokens)
         # clustering
-        cluster = numpy.array(TfIdf.cluster(vector, clusters=8))
+        cluster = numpy.array(TfIdf.cluster(vector, clusters=3))
         # retrieve opinion with tf
-        tfidf_score_index = numpy.argsort(numpy.array([sum(v) for v in vector.toarray()]))[::-1]
-        opinions = []
+        tfidf_score = numpy.array([sum(v) for v in vector.toarray()])
+        # retrieve opinion with senti
+        senti_score = numpy.array([self.senti(s) for s in sentences])
+        score_index = numpy.argsort(tfidf_score * senti_score)
+        positives = []
+        negatives = []
         for i in range(3):
             # retrieve vector index by cluster
             c_index = numpy.where(cluster == i)
-            for k in tfidf_score_index:
+            for k in score_index:
                 if k in c_index[0]:
-                    opinions.append(sentences[k])
+                    negatives.append(sentences[k])
                     break
-        return opinions
+            for k in score_index[::-1]:
+                if k in c_index[0]:
+                    positives.append(sentences[k])
+                    break
+        opinion = namedtuple('Opinion', 'positives, negatives')
+        return opinion(positives, negatives)

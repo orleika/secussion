@@ -27,6 +27,11 @@ const ERROR_MESSAGE = `不正な入力がされました。もう一度試して
 
 const sleep = msec => new Promise(resolve => setTimeout(resolve, msec))
 
+const headers = {
+  'Accept': 'application/json',
+  'Content-Type': 'application/json'
+}
+
 wss.on('connection', (ws) => {
   ws.on('message', (order) => {
     (async (order) => {
@@ -41,20 +46,16 @@ wss.on('connection', (ws) => {
           break
         case '/theme':
           let json = {result: false}
-          const headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
           try {
-            const response = await fetch('http://api:5000/theme', {method: 'post', headers, body: JSON.stringify({message: message})})
+            const option = {method: 'post', headers, body: JSON.stringify({message})}
+            const response = await fetch('http://api:5000/theme', option)
             json = await response.json()
           } catch (error) {
             console.log(error)
           }
-          console.log(json)
           if (json.result) {
-            keywords = json.data.keywords
-            op = json.data.opinions.join('\n')
+            var keywords = json.data.keywords
+            var op = json.data.opinions.join('\n')
           } else {
             ws.send(`/error ${ERROR_MESSAGE}`)
             break
@@ -63,23 +64,23 @@ wss.on('connection', (ws) => {
           ws.send(`/opinion ${THEME_MESSAGE1}\n${op}\n${THEME_MESSAGE2}`)
           break
         case '/opinion':
-          keywords = message.split(':')[0]
-          opinion = message.slice(keywords.length + 1)
+          const keywords = message.split(':')[0]
+          const opinion = message.slice(keywords.length + 1)
+          let json = {result: false}
           try {
-            const response = await fetch(`http://api:5000/opinion/${keywords}/${opinion}`)
-            const json = await response.json()
+            const option = {method: 'post', headers, body: JSON.stringify({keywords, opinion})}
+            const response = await fetch('http://api:5000/opinion', option)
+            json = await response.json()
           } catch (error) {
-            const json = {result: false}
+            console.log(error)
           }
           if (json.result) {
-            posOp = json.data.posOp
-            negOp = json.data.negOp
+            var posOp = json.data.posOpinions.join('\n')
+            var negOp = json.data.negOpinions.join('\n')
           } else {
             ws.send(`/error ${ERROR_MESSAGE}`)
             break
           }
-          posOp = ''
-          negOp = ''
           ws.send(`/new ${OPINION_MESSAGE1}\n${posOp}\n${OPINION_MESSAGE2}\n${negOp}\n${NEXT_MESSAGE}`)
           break
         case '/new':

@@ -26,6 +26,26 @@ def post_theme():
 
     return make_response(jsonify(result))
 
+@app.route('/opinion', methods=['POST'])
+def post_opinion():
+    keywords = request.json['keywords']
+    opinion = request.json['opinion']
+    # try:
+    #     theme = Theme(order).get()
+    # except:
+    #     abort(404)
+    op = Opinion(keywords, opinion).get()
+
+    result = {
+        "result": True,
+        "data": {
+            "posOpinions": op.positives,
+            "negOpinions": op.negatives
+        }
+    }
+
+    return make_response(jsonify(result))
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
