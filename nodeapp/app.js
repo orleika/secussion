@@ -1,6 +1,7 @@
 const express = require('express')
 const http = require('http')
 const WebSocket = require('ws')
+const fetch = require('node-fetch')
 
 const LISTEN_PORT = 3000
 const app = express()
@@ -39,16 +40,38 @@ wss.on('connection', (ws) => {
           ws.send(`/theme ${INIT_MESSAGE}`)
           break
         case '/theme':
-          // exec
-          keywords = ''
-          op = ''
+          try {
+            const response = await fetch(`http://localhost:5000/theme/${order}`)
+            const json = await response.json()
+          } catch (error) {
+            const json = {result: false}
+          }
+          if (json.result) {
+            keywords = json.data.keywords
+            op = json.data.op
+          } else {
+            ws.send(`/error ${ERROR_MESSAGE}`)
+            break
+          }
           ws.send(`/keywords ${keywords}`)
           ws.send(`/opinion ${THEME_MESSAGE1}\n${op}\n${THEME_MESSAGE2}`)
           break
         case '/opinion':
           keywords = message.split(':')[0]
           opinion = message.slice(keywords.length + 1)
-          // exec
+          try {
+            const response = await fetch(`http://localhost:5000/opinion/${keywords}/${opinion}`)
+            const json = await response.json()
+          } catch (error) {
+            const json = {result: false}
+          }
+          if (json.result) {
+            posOp = json.data.posOp
+            negOp = json.data.negOp
+          } else {
+            ws.send(`/error ${ERROR_MESSAGE}`)
+            break
+          }
           posOp = ''
           negOp = ''
           ws.send(`/new ${OPINION_MESSAGE1}\n${posOp}\n${OPINION_MESSAGE2}\n${negOp}\n${NEXT_MESSAGE}`)
