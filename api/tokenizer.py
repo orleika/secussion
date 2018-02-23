@@ -85,8 +85,7 @@ class MeCabTokenizer(object):
         for chunk in chunks:
             if chunk == '':
                 continue
-
-            if len(chunk.split('\')) != 2:
+            if len(chunk.split('\t')) != 2:
                 continue
             surface, feature = chunk.split('\t')
             feature = feature.split(',')
