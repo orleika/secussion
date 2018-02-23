@@ -70,7 +70,7 @@ class Opinion:
         score = 0.0
         tokens = Opinion.tokenize(sentence, pos='default')
         for token in tokens:
-            pn = db.get_pn(surface = token.surface, reading = token.reading, pos = token.pos)
+            pn = db.get_pn(surface = token.get('surface'), reading = token.get('reading'), pos = token.get('pos'))
             if len(pn) == 0:
                 continue
             else:
