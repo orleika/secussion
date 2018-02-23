@@ -39,7 +39,7 @@ class Opinion:
     @staticmethod
     def tokenize_surface(pos='noun_verbs'):
         def surface(sentence):
-            return [token.surface for token in Theme.tokenize(sentence, pos)]
+            return [token.surface for token in Teheme.tokenize(sentence, pos)]
 
     @staticmethod
     def clean(sentence):
@@ -58,7 +58,7 @@ class Opinion:
 
     @staticmethod
     def is_sentence(sentence):
-        tokens = Theme.tokenize(sentence, pos='verbs')
+        tokens = Opinion.tokenize(sentence, pos='verbs')
         if len(tokens) == 0 or len(sentence) > 100 or len(sentence) < 10:
             return False
         else:
@@ -68,9 +68,9 @@ class Opinion:
     def senti(sentence):
         db = DB(host = 'mysql')
         score = 0.0
-        tokens = Theme.tokenize(sentence, pos='default')
+        tokens = Opinion.tokenize(sentence, pos='default')
         for token in tokens:
-            pn = db.get_pn(token.surface, token.reading, token.pos)
+            pn = db.get_pn(surface = token.surface, reading = token.reading, pos = token.pos)
             if len(pn) == 0:
                 continue
             else:
