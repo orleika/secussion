@@ -41,15 +41,20 @@ wss.on('connection', (ws) => {
           break
         case '/theme':
           let json = {result: false}
+          const headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
           try {
-            const response = await fetch(`http://localhost:5000/theme/${message}`)
+            const response = await fetch('http://api:5000/theme', {method: 'post', headers, body: JSON.stringify({message: message})})
             json = await response.json()
           } catch (error) {
             console.log(error)
           }
+          console.log(json)
           if (json.result) {
             keywords = json.data.keywords
-            op = json.data.op
+            op = json.data.opinions.join('\n')
           } else {
             ws.send(`/error ${ERROR_MESSAGE}`)
             break
@@ -61,7 +66,7 @@ wss.on('connection', (ws) => {
           keywords = message.split(':')[0]
           opinion = message.slice(keywords.length + 1)
           try {
-            const response = await fetch(`http://localhost:5000/opinion/${keywords}/${opinion}`)
+            const response = await fetch(`http://api:5000/opinion/${keywords}/${opinion}`)
             const json = await response.json()
           } catch (error) {
             const json = {result: false}

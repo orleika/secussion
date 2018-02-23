@@ -8,6 +8,7 @@ from db import DB
 import numpy
 import re
 from itertools import chain
+from collections import namedtuple
 
 class Theme:
 
@@ -94,4 +95,5 @@ class Theme:
                 if k in c_index[0]:
                     opinions.append(sentences[k])
                     break
-        return opinions
+        theme = namedtuple('Theme', 'keywords, opinions')
+        return theme(' '.join([keyword.surface for keyword in keywords][:3]), opinions)

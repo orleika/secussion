@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from theme import Theme
-from flask import Flask, jsonify, abort, make_response
+from flask import Flask, jsonify, abort, make_response, request
 
 app = Flask(__name__)
 app.debug = True
+app.config['JSON_AS_ASCII'] = False
+app.config['JSON_SORT_KEYS'] = False
 
-@app.route('/theme/<string:order>', methods=['GET'])
-def get_theme(order):
+@app.route('/theme', methods=['POST'])
+def post_theme():
+    order = request.json['message']
     # try:
     #     theme = Theme(order).get()
     # except:
@@ -16,7 +19,8 @@ def get_theme(order):
     result = {
         "result": True,
         "data": {
-            "opinions": theme
+            "keywords": theme.keywords,
+            "opinions": theme.opinions
         }
     }
 
