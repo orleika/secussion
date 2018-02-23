@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from theme import Theme
+from opinion import Opinion
 from flask import Flask, jsonify, abort, make_response, request
 
 app = Flask(__name__)
@@ -10,10 +11,10 @@ app.config['JSON_SORT_KEYS'] = False
 @app.route('/theme', methods=['POST'])
 def post_theme():
     order = request.json['message']
-    try:
-        theme = Theme(order).get()
-    except:
-        abort(404)
+    #try:
+    theme = Theme(order).get()
+    #except:
+    #    abort(404)
 
     result = {
         "result": True,

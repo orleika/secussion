@@ -79,7 +79,7 @@ class Opinion:
 
     def get(self):
         # standardize
-        keywords = self.trimmed_stopwords(self.tokenize(self.theme, pos='noun_verbs'))
+        keywords = self.trimmed_stopwords(self.tokenize(self.opinion, pos='noun_verbs'))
         # search about opinion with keywords
         articles = self.search_articles(self.keywords + [keyword.surface for keyword in keywords][:3])
         # clean

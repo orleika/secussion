@@ -53,34 +53,32 @@ wss.on('connection', (ws) => {
           } catch (error) {
             console.log(error)
           }
-          if (json.result) {
-            var keywords = json.data.keywords
-            var op = json.data.opinions.join('\n')
-          } else {
+          if (!json.result) {
             ws.send(`/error ${ERROR_MESSAGE}`)
-            break
+          } else {
+            const keywords = json.data.keywords
+            const op = json.data.opinions.join('\n')
+            ws.send(`/keywords ${keywords}`)
+            ws.send(`/opinion ${THEME_MESSAGE1}\n${op}\n${THEME_MESSAGE2}`)
           }
-          ws.send(`/keywords ${keywords}`)
-          ws.send(`/opinion ${THEME_MESSAGE1}\n${op}\n${THEME_MESSAGE2}`)
           break
         case '/opinion':
-          const keywords = message.split(':')[0]
-          const opinion = message.slice(keywords.length + 1)
           try {
+            const keywords = message.split(':')[0]
+            const opinion = message.slice(keywords.length + 1)
             const option = {method: 'post', headers, body: JSON.stringify({keywords, opinion})}
             const response = await fetch('http://api:5000/opinion', option)
             json = await response.json()
           } catch (error) {
             console.log(error)
           }
-          if (json.result) {
-            var posOp = json.data.posOpinions.join('\n')
-            var negOp = json.data.negOpinions.join('\n')
-          } else {
+          if (!json.result) {
             ws.send(`/error ${ERROR_MESSAGE}`)
-            break
+          } else {
+            const posOp = json.data.posOpinions.join('\n')
+            const negOp = json.data.negOpinions.join('\n')
+            ws.send(`/new ${OPINION_MESSAGE1}\n${posOp}\n${OPINION_MESSAGE2}\n${negOp}\n${NEXT_MESSAGE}`)
           }
-          ws.send(`/new ${OPINION_MESSAGE1}\n${posOp}\n${OPINION_MESSAGE2}\n${negOp}\n${NEXT_MESSAGE}`)
           break
         case '/new':
           ws.send(`/theme ${RENEW_MESSAGE}`)

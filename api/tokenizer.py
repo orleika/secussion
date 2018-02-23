@@ -2,6 +2,7 @@
 from collections import namedtuple
 import MeCab
 from janome.tokenizer import Tokenizer
+from pprint import pprint
 
 class JanomeTokenizer(object):
 
@@ -83,6 +84,9 @@ class MeCabTokenizer(object):
             infl_type, infl_form, base_form, reading, phonetic, word')
         for chunk in chunks:
             if chunk == '':
+                continue
+
+            if len(chunk.split('\')) != 2:
                 continue
             surface, feature = chunk.split('\t')
             feature = feature.split(',')
