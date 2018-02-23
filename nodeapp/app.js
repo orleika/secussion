@@ -40,12 +40,12 @@ wss.on('connection', (ws) => {
       const command = order.split(' ')[0]
       console.log(order.split(' '))
       const message = order.slice(command.length + 1)
+      let json = {result: false}
       switch (command) {
         case '/init':
           ws.send(`/theme ${INIT_MESSAGE}`)
           break
         case '/theme':
-          let json = {result: false}
           try {
             const option = {method: 'post', headers, body: JSON.stringify({message})}
             const response = await fetch('http://api:5000/theme', option)
@@ -66,7 +66,6 @@ wss.on('connection', (ws) => {
         case '/opinion':
           const keywords = message.split(':')[0]
           const opinion = message.slice(keywords.length + 1)
-          let json = {result: false}
           try {
             const option = {method: 'post', headers, body: JSON.stringify({keywords, opinion})}
             const response = await fetch('http://api:5000/opinion', option)
