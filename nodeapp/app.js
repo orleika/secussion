@@ -40,11 +40,12 @@ wss.on('connection', (ws) => {
           ws.send(`/theme ${INIT_MESSAGE}`)
           break
         case '/theme':
+          let json = {result: false}
           try {
-            const response = await fetch(`http://localhost:5000/theme/${order}`)
-            const json = await response.json()
+            const response = await fetch(`http://localhost:5000/theme/${message}`)
+            json = await response.json()
           } catch (error) {
-            const json = {result: false}
+            console.log(error)
           }
           if (json.result) {
             keywords = json.data.keywords
