@@ -16,9 +16,40 @@ services:
       - 'nodeapp'
   nodeapp:
     image: keymetrics/pm2:latest-alpine
-    ports:
-      - '3000:3000'
+    links:
+      - 'api'
     volumes:
       - $PWD/nodeapp:/root
     working_dir: /root
     command: ['pm2-runtime', 'process.yml']
+  api:
+    image: wordnet-jp
+    build:
+      context: ./api
+      cache_from:
+        - python:3
+    volumes:
+      - $PWD/api:/work
+    networks:
+      - dmaki_link
+    command:
+      - /bin/bash
+    stdin_open: true
+    tty: true
+  mysql:
+    image: mysql:5.7
+    env_file:
+      - .env
+    volumes:
+      - $PWD/mysql/conf.d:/etc/mysql/conf.d:ro
+      - $PWD/mysql/initdb.d:/docker-entrypoint-initdb.d:ro
+      - db-storage:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    networks:
+      - dmaki_link
+volumes:
+  db-storage:
+networks:
+  dmaki_link:
+    external: true

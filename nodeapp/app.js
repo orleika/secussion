@@ -42,7 +42,7 @@ wss.on('connection', (ws) => {
         case '/theme':
           let json = {result: false}
           try {
-            const response = await fetch(`http://localhost:5000/theme/${message}`)
+            const response = await fetch(`http://api:5000/theme/${message}`)
             json = await response.json()
           } catch (error) {
             console.log(error)
@@ -61,7 +61,7 @@ wss.on('connection', (ws) => {
           keywords = message.split(':')[0]
           opinion = message.slice(keywords.length + 1)
           try {
-            const response = await fetch(`http://localhost:5000/opinion/${keywords}/${opinion}`)
+            const response = await fetch(`http://api:5000/opinion/${keywords}/${opinion}`)
             const json = await response.json()
           } catch (error) {
             const json = {result: false}
