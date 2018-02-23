@@ -9,6 +9,7 @@
   "dependencies": {
     "child-process-promise": "^2.2.1",
     "express": "^4.16.2",
+    "node-fetch": "^2.0.0",
     "ws": "^4.0.0"
   }
 }
