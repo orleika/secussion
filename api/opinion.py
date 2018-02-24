@@ -103,7 +103,11 @@ class Opinion:
         # retrieve opinion with tf
         tfidf_score = numpy.array([sum(v) for v in vector.toarray()])
         # retrieve opinion with senti
-        senti_score = numpy.array([self.senti(s) for s in sentences])
+        # senti_score = numpy.array([self.senti(s) for s in sentences])
+        senti_score = []
+        for s in sentences:
+            senti_score.append(self.senti(s))
+        senti_score = numpy.array(senti_score)
         score_index = numpy.argsort(tfidf_score * senti_score)
         positives = []
         negatives = []
