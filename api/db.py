@@ -95,7 +95,7 @@ class DB:
         cursor = self.conn.cursor()
         sql = ("SELECT * FROM pns WHERE surface = %(surface)s")
         data = {
-            surface: surface
+            'surface': surface
         }
         cursor.execute(sql, data)
         pn = namedtuple('Pn', 'surface, reading, pos, score')
