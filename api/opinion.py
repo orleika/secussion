@@ -33,6 +33,8 @@ class Opinion:
             tokens = tokenizer.extract_verbs_baseform(sentence)
         elif pos == 'noun_verbs':
             tokens = tokenizer.extract_noun_verbs_baseform(sentence)
+        elif pos == 'senti':
+            tokens = tokenizer.extract_senti_baseform(sentence)
         else:
             tokens = tokenizer.extract_baseform(sentence)
         return tokens
@@ -65,14 +67,26 @@ class Opinion:
         else:
             return True
 
+    # @staticmethod
+    # def senti(sentence):
+    #     db = DB(host = 'mysql')
+    #     tokenizer = MeCabTokenizer(user_dic_path = '/usr/local/lib/mecab/dic/mecab-ipadic-neologd')
+    #     tokens = tokenizer.extract_senti_baseform(sentence)
+    #     score = 0.0
+    #     for token in tokens:
+    #         pn = db.get_pn(surface = token.surface, reading = token.reading, pos = token.pos)
+    #         if len(pn) == 0:
+    #             continue
+    #         else:
+    #             score += pn[0].score
+    #     return score / len(tokens)
+
     @staticmethod
-    def senti(sentence):
+    def senti(tokens):
         db = DB(host = 'mysql')
-        tokenizer = MeCabTokenizer(user_dic_path = '/usr/local/lib/mecab/dic/mecab-ipadic-neologd')
-        tokens = tokenizer.extract_senti_baseform(sentence)
         score = 0.0
         for token in tokens:
-            pn = db.get_pn(surface = token.surface, reading = token.reading, pos = token.pos)
+            pn = db.get_pn(surface = token)
             if len(pn) == 0:
                 continue
             else:
@@ -106,8 +120,13 @@ class Opinion:
         # retrieve opinion with senti
         # senti_score = numpy.array([self.senti(s) for s in sentences])
         senti_score = []
-        for s in sentences:
-            senti_score.append(self.senti(s))
+        # for s in sentences:
+        #     senti_score.append(self.senti(s))
+
+        for sentence in sentences:
+            senti_tokens = [token.surface for token in self.tokenize(sentence, pos='senti')]
+            senti_score.append(self.senti(senti_tokens))
+
         senti_score = numpy.array(senti_score)
         score_index = numpy.argsort(tfidf_score * senti_score)
         positives = []

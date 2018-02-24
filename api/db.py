@@ -91,13 +91,11 @@ class DB:
         cursor.close()
         return results
 
-    def get_pn(self, surface = '', reading = '', pos = ''):
+    def get_pn(self, surface = ''):
         cursor = self.conn.cursor()
-        sql = ("SELECT * FROM pns WHERE surface = %(surface)s and reading = %(reading)s and pos = %(pos)s")
+        sql = ("SELECT * FROM pns WHERE surface = %(surface)s")
         data = {
-            surface: surface,
-            reading: reading,
-            pos: pos
+            surface: surface
         }
         cursor.execute(sql, data)
         pn = namedtuple('Pn', 'surface, reading, pos, score')
