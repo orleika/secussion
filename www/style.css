@@ -30,10 +30,6 @@ input[type='text']:focus {
     padding-top: 7.5rem;
   }
 
-  .wrapper .container {
-    max-width: 80rem;
-  }
-
   .content {
     height: calc(90vh - 7.5rem / 2);
   }
