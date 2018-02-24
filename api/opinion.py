@@ -68,8 +68,9 @@ class Opinion:
     @staticmethod
     def senti(sentence):
         db = DB(host = 'mysql')
+        tokenizer = MeCabTokenizer(user_dic_path = '/usr/local/lib/mecab/dic/mecab-ipadic-neologd')
+        tokens = tokenizer.extract_senti_baseform(sentence)
         score = 0.0
-        tokens = Opinion.tokenize(sentence, pos='default')
         for token in tokens:
             pn = db.get_pn(surface = token.surface, reading = token.reading, pos = token.pos)
             if len(pn) == 0:
