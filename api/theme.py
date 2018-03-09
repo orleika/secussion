@@ -53,7 +53,7 @@ class Theme:
 
     @staticmethod
     def divide(article):
-        return list(filter(None, map(str.strip, re.findall(r'[^。．？！…?!　\n]+(?:[。。．？！…?!　\n]|$)', article))))
+        return list(filter(None, map(str.strip, re.findall(r'[^。．？！…?!　 \n]+(?:[。。．？！…?!　 \n]|$)', article))))
 
     @staticmethod
     def is_sentence(sentence):

@@ -11,10 +11,11 @@ app.config['JSON_SORT_KEYS'] = False
 @app.route('/theme', methods=['POST'])
 def post_theme():
     order = request.json['message']
-    #try:
-    theme = Theme(order).get()
-    #except:
-    #    abort(404)
+    try:
+        theme = Theme(order).get()
+    except:
+        abort(404)
+    except:
 
     result = {
         "result": True,
@@ -30,11 +31,10 @@ def post_theme():
 def post_opinion():
     keywords = request.json['keywords']
     opinion = request.json['opinion']
-    # try:
-    #     theme = Theme(order).get()
-    # except:
-    #     abort(404)
-    op = Opinion(keywords, opinion).get()
+    try:
+        op = Opinion(keywords, opinion).get()
+    except:
+        abort(404)
 
     result = {
         "result": True,
