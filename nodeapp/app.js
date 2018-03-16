@@ -36,7 +36,6 @@ wss.on('connection', (ws) => {
   ws.on('message', (order) => {
     (async (order) => {
       console.log(order)
-      await sleep(1000)
       const command = order.split(' ')[0]
       console.log(order.split(' '))
       const message = order.slice(command.length + 1)
