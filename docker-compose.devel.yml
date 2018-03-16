@@ -34,7 +34,9 @@ services:
     volumes:
       - $PWD/api:/work
     command:
-      - ['python3', 'main.py']
+      - /bin/bash
+    stdin_open: true
+    tty: true
   mysql:
     image: mysql:5.7
     env_file:
