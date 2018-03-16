@@ -57,15 +57,27 @@ class Opinion:
 
     @staticmethod
     def divide(article):
-        return list(filter(None, map(str.strip, re.findall(r'[^。．？！…?!　\n]+(?:[。。．？！…?!　\n]|$)', article))))
+        return list(filter(None, map(str.strip, re.findall(r'[^。．？！…?!　 \n]+(?:[。。．？！…?!　 \n]|$)', article))))
 
     @staticmethod
     def is_sentence(sentence):
-        tokens = Opinion.tokenize(sentence, pos='verbs')
-        if len(tokens) == 0 or len(sentence) > 100 or len(sentence) < 10:
+        if len(sentence) > 150 or len(sentence) < 25:
             return False
-        else:
-            return True
+        tokens = Opinion.tokenize(sentence)
+        if len(tokens) == 0:
+            return False
+        if tokens[0].pos != '名詞' and tokens[0] != '副詞':
+            return False
+        if tokens[-1].pos != '助動詞' and tokens[-1].pos != '動詞' and tokens[-1].pos != '記号':
+            return False
+        noun_count = 0
+        for token in tokens:
+            if token.pos == '名詞' or token.pos == '記号':
+                noun_count += 1
+        noun_ratio = noun_count / len(tokens)
+        if noun_ratio > 0.7 or noun_ratio < 0.2:
+            return False
+        return True
 
     # @staticmethod
     # def senti(sentence):
