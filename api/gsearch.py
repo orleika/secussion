@@ -54,7 +54,11 @@ class GoogleScrapy:
     #         self.searches.append(result)
 
     def get_search(self):
-        resp = requests.get(self.url + '&q=' + self.keyword)
+        try:
+            resp = requests.get(self.url + '&q=' + self.keyword, timeout=1)
+        except requests.exceptions.RequestException as e:
+            pprint(e)
+            return
         soup = BeautifulSoup(resp.content, 'html5lib')
         el_url = soup.select('.r a')
         n_articles = min(10, len(el_url))
@@ -77,7 +81,11 @@ class GoogleScrapy:
     #     return html
     @staticmethod
     def get_article(url):
-        resp = requests.get(url)
+        try:
+            resp = requests.get(url, timeout=1)
+        except requests.exceptions.RequestException as e:
+            pprint(e)
+            return ""
         soup = BeautifulSoup(resp.content, 'html5lib')
         # [s.decompose() for s in soup('style')]
         # [s.decompose() for s in soup('script')]
