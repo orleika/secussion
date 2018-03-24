@@ -56,7 +56,7 @@ wss.on('connection', (ws) => {
             ws.send(`/error ${ERROR_MESSAGE}`)
           } else {
             const keywords = json.data.keywords
-            const op = json.data.opinions.join('\n')
+            const op = json.data.opinions.map((m) => '#main ' + m).join('\n')
             ws.send(`/keywords ${keywords}`)
             ws.send(`/opinion ${THEME_MESSAGE1}\n${op}\n${THEME_MESSAGE2}`)
           }
@@ -74,8 +74,8 @@ wss.on('connection', (ws) => {
           if (!json.result) {
             ws.send(`/error ${ERROR_MESSAGE}`)
           } else {
-            const posOp = json.data.posOpinions.join('\n')
-            const negOp = json.data.negOpinions.join('\n')
+            const posOp = json.data.posOpinions.map((m) => '#main ' + m).join('\n')
+            const negOp = json.data.negOpinions.map((m) => '#main ' + m).join('\n')
             ws.send(`/new ${OPINION_MESSAGE1}\n${posOp}\n${OPINION_MESSAGE2}\n${negOp}\n${NEXT_MESSAGE}`)
           }
           break

@@ -45,14 +45,15 @@ input[type='text']:focus {
 
 .wrapper .container {
   padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .content {
-  height: calc(90vh - 2rem / 2);
+  height: calc(90vh - 2rem);
 }
 
 .footer {
-  height: calc(10vh - 2rem / 2);
+  height: calc(10vh - 2rem);
   width: 100%;
   padding: 0 1rem;
 }
@@ -70,6 +71,10 @@ input[type='text']:focus {
   animation-name: popup-animation;
   animation-duration: 0.3s;
   animation-timing-function: ease-in-out;
+}
+
+.message-main {
+  background: #F9FBE7;
 }
 
 .message-order {

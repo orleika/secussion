@@ -90,9 +90,14 @@
     }
     const messages = message.split('\n').filter(t => t)
     messages.forEach(m => {
-      const t = document.createTextNode(m)
       const e = document.createElement('div')
       e.classList.add('message')
+      const type = m.split(' ')[0]
+      if (type === '#main') {
+        m = m.slice(type.length + 1)
+        e.classList.add('message-main')
+      }
+      const t = document.createTextNode(m)
       if (order) {
         e.classList.add('message-order')
       }
